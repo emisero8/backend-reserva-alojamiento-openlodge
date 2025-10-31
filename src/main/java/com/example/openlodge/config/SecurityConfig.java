@@ -93,8 +93,11 @@ public class SecurityConfig {
                         // RUTAS PÚBLICAS (INCLUYENDO /LOGIN)
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // ⬅️ Para registrarse
-                        .requestMatchers(HttpMethod.GET, "/api/propiedades/**").permitAll() // ⬅️ Ver todas o una
-                                                                                            // propiedad
+                        .requestMatchers(HttpMethod.GET, "/api/propiedades/**").permitAll() // ⬅️ Ver todas o una propiedad
+
+                        .requestMatchers(HttpMethod.GET, "/api/servicios").permitAll() // Para que todos vean los servicios
+                        .requestMatchers(HttpMethod.POST, "/api/servicios").permitAll() // Para poder cargarlos (temporal)
+
                         .requestMatchers("/h2-console/**").permitAll() // ⬅️ Permitir acceso a la consola H2
 
                         // Todo lo demás (el resto de endpoints) requiere autenticación

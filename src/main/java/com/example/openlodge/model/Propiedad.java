@@ -2,15 +2,15 @@ package com.example.openlodge.model;
 
 import java.util.Set;
 
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -43,12 +43,12 @@ public class Propiedad {
     @Column(nullable = false)
     private int numeroHuespedes; // Max. cantidad de personas
 
-    // --- Campos que sacamos de "details" ---
-    @Column(nullable = false)
-    private int habitaciones; // De "2 habitaciones"
+    // --- ESTOS DOS SE DETALLAN EN LA DESCRIPCION Y LISTO ---
+    //@Column(nullable = false)
+    //private int habitaciones; // De "2 habitaciones"
 
-    @Column(nullable = false)
-    private int banos; // De "1 baño"
+    //@Column(nullable = false)
+    //private int banos; // De "1 baño"
 
     // --- Campo para la imagen ---
     @Column(name = "imagen_principal_url")
@@ -62,9 +62,17 @@ public class Propiedad {
     // --- ¡NUEVO! Para la lista de "servicios" ---
     // Esto crea una tabla separada llamada "propiedad_servicios"
     // que contendrá "WIFI", "Pileta", etc., asociadas a esta propiedad.
-    @ElementCollection(fetch = FetchType.EAGER) // EAGER: Cargar los servicios junto con la propiedad
-    @CollectionTable(name = "propiedad_servicios", joinColumns = @JoinColumn(name = "propiedad_id"))
-    @Column(name = "servicio", nullable = false)
-    private Set<String> servicios; // Usamos Set para evitar duplicados
+    //@ElementCollection(fetch = FetchType.EAGER) // EAGER: Cargar los servicios junto con la propiedad
+    //@CollectionTable(name = "propiedad_servicios", joinColumns = @JoinColumn(name = "propiedad_id"))
+    //@Column(name = "servicio", nullable = false)
+
+    @ManyToMany(fetch = FetchType.EAGER) // EAGER: Cargar los servicios con la propiedad
+    @JoinTable(
+        name = "propiedad_x_servicio", // tabla intermedia
+        joinColumns = @JoinColumn(name = "propiedad_id"),
+        inverseJoinColumns = @JoinColumn(name = "servicio_id")
+    )
+
+    private Set<Servicio> servicios; // Usamos Set para evitar duplicados
 
 }
