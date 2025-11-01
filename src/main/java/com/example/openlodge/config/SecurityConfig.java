@@ -90,10 +90,13 @@ public class SecurityConfig {
                 // 3. Definimos las reglas de autorización (quién puede ver qué)
                 .authorizeHttpRequests(authz -> authz
 
+                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
+
                         // RUTAS PÚBLICAS (INCLUYENDO /LOGIN)
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // ⬅️ Para registrarse
-                        .requestMatchers(HttpMethod.GET, "/api/propiedades/**").permitAll() // ⬅️ Ver todas o una propiedad
+                        // Solo permitimos ver la lista completa y el detalle por ID
+                        .requestMatchers(HttpMethod.GET, "/api/propiedades", "/api/propiedades/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/servicios").permitAll() // Para que todos vean los servicios
                         //.requestMatchers(HttpMethod.POST, "/api/servicios").permitAll() // Para poder cargarlos (temporal)
                         .requestMatchers("/h2-console/**").permitAll() // ⬅️ Permitir acceso a la consola H2
