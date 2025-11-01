@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,6 +66,17 @@ public class UsuarioController {
         } else {
             return ResponseEntity.notFound().build(); // Devuelve 404 Not Found
         }
+    }
+
+    /**
+     * Atrapa la excepción que lanzamos desde el servicio
+     * si el email ya existe.
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
+        // Devolvemos un 409 Conflict (un error semántico
+        // que dice "la petición no se completó por un conflicto")
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
 }

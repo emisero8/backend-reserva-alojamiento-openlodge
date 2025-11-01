@@ -62,9 +62,8 @@ public class UsuarioService {
      */
     public Usuario crearUsuario(Usuario usuario) {
         
-        // Lógica futura: (puedes descomentar esto si quieres)
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
-            throw new RuntimeException("El email ya existe");
+            throw new IllegalArgumentException("El email ya se encuentra registrado.");
         }
 
         // 4. ¡ACCIÓN! Usamos el encoder antes de guardar
