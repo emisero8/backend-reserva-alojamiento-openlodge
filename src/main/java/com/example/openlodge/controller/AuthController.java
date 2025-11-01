@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,7 +57,13 @@ public class AuthController {
         // 3. Generamos el token JWT
         final String token = jwtService.generateToken(userDetails);
 
-        // 4. Devolvemos el token en la respuesta
-        return ResponseEntity.ok(new AuthResponse(token));
+        // 4. Obtenemos el rol desde los UserDetails
+        final String rol = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Usuario no tiene rol."));
+
+        // 5. Devolvemos el token en la respuesta
+        return ResponseEntity.ok(new AuthResponse(token, rol));
     }
 }
