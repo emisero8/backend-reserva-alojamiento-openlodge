@@ -76,6 +76,26 @@ public class PropiedadController {
     }
 
     /**
+     * Endpoint para ASIGNAR un servicio a una propiedad.
+     * El anfitrión (en la app) seleccionará su propiedad y luego
+     * hará clic en un servicio (ej: "WIFI" con id 1).
+     *
+     * Se activa con: POST http://localhost:8080/api/propiedades/1/servicios/1
+     * (Asigna servicio 1 a propiedad 1)
+     */
+    @PostMapping("/{propiedadId}/servicios/{servicioId}")
+    public ResponseEntity<Propiedad> agregarServicioAPropiedad(
+            @PathVariable Long propiedadId,
+            @PathVariable Long servicioId) {
+        
+        // (En el futuro, aquí deberíamos validar que el usuario logueado
+        // sea el dueño de la propiedadId antes de agregar el servicio)
+        
+        Propiedad propiedadActualizada = propiedadService.agregarServicioAPropiedad(propiedadId, servicioId);
+        return ResponseEntity.ok(propiedadActualizada);
+    }
+
+    /**
      * ¡EXTRA! Un manejador de excepciones.
      * Si el PropiedadService lanza el error "Anfitrión no encontrado...",
      * este método lo captura y devuelve un 404 en lugar de un 500 feo.

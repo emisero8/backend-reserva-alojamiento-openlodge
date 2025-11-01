@@ -1,5 +1,6 @@
 package com.example.openlodge.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,12 +13,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode(exclude = "propiedades")
 @Entity
 @Table(name="servicios")
 public class Servicio {
@@ -36,5 +43,5 @@ public class Servicio {
     // la entidad Propiedad ya se encarga de la relación".
     @ManyToMany(mappedBy = "servicios")
     @JsonIgnore // ¡Importante! Evita bucles infinitos al convertir a JSON
-    private Set<Propiedad> propiedades;
+    private Set<Propiedad> propiedades = new HashSet<>();
 }

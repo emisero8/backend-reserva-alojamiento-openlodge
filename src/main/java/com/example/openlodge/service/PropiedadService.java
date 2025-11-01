@@ -7,20 +7,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.openlodge.model.Propiedad;
+import com.example.openlodge.model.Servicio;
 import com.example.openlodge.model.Usuario;
 import com.example.openlodge.repository.PropiedadRepository;
+import com.example.openlodge.repository.ServicioRepository;
 import com.example.openlodge.repository.UsuarioRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class PropiedadService {
     // 1. Inyectamos ambos repositorios
     private final PropiedadRepository propiedadRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ServicioRepository servicioRepository;
 
     @Autowired
-    public PropiedadService(PropiedadRepository propiedadRepository, UsuarioRepository usuarioRepository) {
+    public PropiedadService(PropiedadRepository propiedadRepository, UsuarioRepository usuarioRepository, ServicioRepository servicioRepository) {
         this.propiedadRepository = propiedadRepository;
         this.usuarioRepository = usuarioRepository;
+        this.servicioRepository = servicioRepository;
     }
 
     // --- Métodos de Lógica de Negocio ---
@@ -70,5 +76,26 @@ public class PropiedadService {
         return propiedadRepository.save(propiedad);
     }
 
+    /**
+     * Agrega un servicio existente a una propiedad existente.
+     */
+    @Transactional // ⬅️ Asegura que la operación se complete (o falle) toda junta
+    public Propiedad agregarServicioAPropiedad(Long propiedadId, Long servicioId) {
+        
+        // 1. Buscamos la propiedad
+        Propiedad propiedad = propiedadRepository.findById(propiedadId)
+                .orElseThrow(() -> new RuntimeException("Propiedad no encontrada con ID: " + propiedadId));
+
+        // 2. Buscamos el servicio
+        Servicio servicio = servicioRepository.findById(servicioId)
+                .orElseThrow(() -> new RuntimeException("Servicio no encontrado con ID: " + servicioId));
+
+        // 3. Añadimos el servicio al Set de la propiedad
+        //    (Como es un Set, si ya existe, no hace nada)
+        propiedad.getServicios().add(servicio);
+
+        // 4. Guardamos la propiedad actualizada
+        return propiedadRepository.save(propiedad);
+    }
     // (Aquí irían métodos como actualizarPropiedad, borrarPropiedad, etc.)
 }

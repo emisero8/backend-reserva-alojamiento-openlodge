@@ -1,5 +1,6 @@
 package com.example.openlodge.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -14,12 +15,18 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode(exclude = {"anfitrion","servicios"})
 @Entity
 @Table(name = "propiedades")
 public class Propiedad {
@@ -73,6 +80,6 @@ public class Propiedad {
         inverseJoinColumns = @JoinColumn(name = "servicio_id")
     )
 
-    private Set<Servicio> servicios; // Usamos Set para evitar duplicados
+    private Set<Servicio> servicios = new HashSet<>(); // Usamos Set para evitar duplicados
 
 }
