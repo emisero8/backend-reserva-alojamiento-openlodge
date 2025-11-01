@@ -1,10 +1,13 @@
 package com.example.openlodge.controller;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,12 +89,19 @@ public class PropiedadController {
     @PostMapping("/{propiedadId}/servicios/{servicioId}")
     public ResponseEntity<Propiedad> agregarServicioAPropiedad(
             @PathVariable Long propiedadId,
-            @PathVariable Long servicioId) {
+            @PathVariable Long servicioId,
+            @AuthenticationPrincipal UserDetails userDetails) {
         
-        // (En el futuro, aquí deberíamos validar que el usuario logueado
-        // sea el dueño de la propiedadId antes de agregar el servicio)
+        // 1. Obtenemos el email del usuario logueado
+        String emailUsuarioLogueado = userDetails.getUsername();
+
+        // 2. Pasamos el email al servicio para la validación
+        Propiedad propiedadActualizada = propiedadService.agregarServicioAPropiedad(
+                propiedadId, 
+                servicioId, 
+                emailUsuarioLogueado // ⬅️ Pasamos el email
+        );
         
-        Propiedad propiedadActualizada = propiedadService.agregarServicioAPropiedad(propiedadId, servicioId);
         return ResponseEntity.ok(propiedadActualizada);
     }
 
@@ -100,9 +110,16 @@ public class PropiedadController {
      * Si el PropiedadService lanza el error "Anfitrión no encontrado...",
      * este método lo captura y devuelve un 404 en lugar de un 500 feo.
      */
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        // Esto maneja el 404 (Not Found)
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
-
+    
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDenied(AccessDeniedException ex) {
+        // Esto maneja el 403 (Forbidden)
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
 }

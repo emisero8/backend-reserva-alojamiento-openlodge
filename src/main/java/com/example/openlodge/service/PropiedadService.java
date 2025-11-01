@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.example.openlodge.model.Propiedad;
@@ -80,11 +81,13 @@ public class PropiedadService {
      * Agrega un servicio existente a una propiedad existente.
      */
     @Transactional // ⬅️ Asegura que la operación se complete (o falle) toda junta
-    public Propiedad agregarServicioAPropiedad(Long propiedadId, Long servicioId) {
+    public Propiedad agregarServicioAPropiedad(Long propiedadId, Long servicioId, String emailUsuarioLogueado) {
         
         // 1. Buscamos la propiedad
         Propiedad propiedad = propiedadRepository.findById(propiedadId)
                 .orElseThrow(() -> new RuntimeException("Propiedad no encontrada con ID: " + propiedadId));
+        //1.1 Validar que el usuario sea el propietario de la propiedad
+        validarPropietario(propiedad, emailUsuarioLogueado);
 
         // 2. Buscamos el servicio
         Servicio servicio = servicioRepository.findById(servicioId)
@@ -97,5 +100,20 @@ public class PropiedadService {
         // 4. Guardamos la propiedad actualizada
         return propiedadRepository.save(propiedad);
     }
-    // (Aquí irían métodos como actualizarPropiedad, borrarPropiedad, etc.)
+
+    /**
+     * Comprueba si el email del anfitrión de la propiedad
+     * coincide con el email del usuario logueado.
+     */
+    private void validarPropietario(Propiedad propiedad, String emailUsuarioLogueado) {
+        if (!propiedad.getAnfitrion().getEmail().equals(emailUsuarioLogueado)) {
+            // Si no coinciden, lanzamos un error de Acceso Denegado.
+            // (Spring lo convertirá en un 403 Forbidden)
+            throw new AccessDeniedException("No tienes permiso para modificar esta propiedad.");
+        }
+    }
+    // NOTA: Deberíamos añadir esta llamada a validarPropietario()
+    // en futuros métodos como:
+    // - public Propiedad actualizarPropiedad(Long propiedadId, Propiedad datos, String email)
+    // - public void borrarPropiedad(Long propiedadId, String email)
 }

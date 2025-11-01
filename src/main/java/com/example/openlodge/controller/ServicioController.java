@@ -43,9 +43,9 @@ public class ServicioController {
      *
      * Se activa con: POST http://localhost:8080/api/servicios
      */
-    @PostMapping
-    public ResponseEntity<Servicio> crearServicio(@RequestBody Servicio servicio) {
-        Servicio nuevoServicio = servicioService.crearServicio(servicio);
-        return new ResponseEntity<>(nuevoServicio, HttpStatus.CREATED);
-    }
+   // @PostMapping
+    //public ResponseEntity<Servicio> crearServicio(@RequestBody Servicio servicio) {
+     //   Servicio nuevoServicio = servicioService.crearServicio(servicio);
+      //  return new ResponseEntity<>(nuevoServicio, HttpStatus.CREATED);
+    //}
 }

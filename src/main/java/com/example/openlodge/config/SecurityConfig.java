@@ -94,11 +94,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // ⬅️ Para registrarse
                         .requestMatchers(HttpMethod.GET, "/api/propiedades/**").permitAll() // ⬅️ Ver todas o una propiedad
-
                         .requestMatchers(HttpMethod.GET, "/api/servicios").permitAll() // Para que todos vean los servicios
-                        .requestMatchers(HttpMethod.POST, "/api/servicios").permitAll() // Para poder cargarlos (temporal)
-
+                        //.requestMatchers(HttpMethod.POST, "/api/servicios").permitAll() // Para poder cargarlos (temporal)
                         .requestMatchers("/h2-console/**").permitAll() // ⬅️ Permitir acceso a la consola H2
+
+                        // RUTAS POR ROL
+                        // Solo usuarios con rol "ANFITRION" pueden crear propiedades
+                        // o asignar servicios.
+                        .requestMatchers(HttpMethod.POST, "/api/propiedades/**").hasAuthority("ANFITRION")
+                        // Solo usuarios con rol "ANFITRION" pueden crear servicios
+                        // (Podríamos cambiarlo a "ADMIN" en el futuro)
+                        //.requestMatchers(HttpMethod.POST, "/api/servicios").hasAuthority("ANFITRION")
 
                         // Todo lo demás (el resto de endpoints) requiere autenticación
                         .anyRequest().authenticated());
