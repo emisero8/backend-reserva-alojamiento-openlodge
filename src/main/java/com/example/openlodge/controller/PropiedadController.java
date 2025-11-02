@@ -55,11 +55,17 @@ public class PropiedadController {
         return propiedadService.obtenerPropiedadesPorAnfitrion(anfitrionId);
     }
 
-    @PostMapping("/anfitrion/{anfitrionId}")
+    @PostMapping
     public ResponseEntity<Propiedad> crearPropiedad(
-            @PathVariable Long anfitrionId,
-            @RequestBody Propiedad propiedad) {
-        Propiedad nuevaPropiedad = propiedadService.crearPropiedad(propiedad, anfitrionId);
+            @RequestBody Propiedad propiedad,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        // 1. Obtenemos el email del token
+        String emailAnfitrion = userDetails.getUsername();
+
+        // 2. Llamamos al servicio actualizado
+        Propiedad nuevaPropiedad = propiedadService.crearPropiedad(propiedad, emailAnfitrion);
+
         return new ResponseEntity<>(nuevaPropiedad, HttpStatus.CREATED);
     }
 

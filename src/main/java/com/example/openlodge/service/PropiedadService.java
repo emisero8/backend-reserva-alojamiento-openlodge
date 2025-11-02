@@ -46,14 +46,18 @@ public class PropiedadService {
         return propiedadRepository.findByAnfitrionId(anfitrionId);
     }
 
-    public Propiedad crearPropiedad(Propiedad propiedad, Long anfitrionId) {
-        Optional<Usuario> anfitrionOptional = usuarioRepository.findById(anfitrionId);
+    public Propiedad crearPropiedad(Propiedad propiedad, String emailUsuarioLogueado) {
+        Optional<Usuario> anfitrionOptional = usuarioRepository.findByEmail(emailUsuarioLogueado);
 
+        // Verificamos si el anfitrión existe
         if (anfitrionOptional.isEmpty()) {
-            // ¡CAMBIO AQUÍ!
-            throw new EntityNotFoundException("Anfitrión no encontrado con ID: " + anfitrionId);
+            throw new EntityNotFoundException("Anfitrión no encontrado con email: " + emailUsuarioLogueado);
         }
+
+        // Si existe, lo "seteamos" en el objeto propiedad
         propiedad.setAnfitrion(anfitrionOptional.get());
+
+        // Guardamos la propiedad (ya vinculada) en la BD
         return propiedadRepository.save(propiedad);
     }
 
