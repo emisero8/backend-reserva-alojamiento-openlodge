@@ -97,17 +97,23 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // ⬅️ Para registrarse
                         // Solo permitimos ver la lista completa y el detalle por ID
                         .requestMatchers(HttpMethod.GET, "/api/propiedades", "/api/propiedades/{id}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/servicios").permitAll() // Para que todos vean los servicios
-                        //.requestMatchers(HttpMethod.POST, "/api/servicios").permitAll() // Para poder cargarlos (temporal)
+                        .requestMatchers(HttpMethod.GET, "/api/servicios").permitAll() // Para que todos vean los
+                                                                                       // servicios
+                        // .requestMatchers(HttpMethod.POST, "/api/servicios").permitAll() // Para poder
+                        // cargarlos (temporal)
                         .requestMatchers("/h2-console/**").permitAll() // ⬅️ Permitir acceso a la consola H2
 
                         // RUTAS POR ROL
                         // Solo usuarios con rol "ANFITRION" pueden crear propiedades
                         // o asignar servicios.
-                        .requestMatchers(HttpMethod.POST, "/api/propiedades/**").hasAuthority("ANFITRION")
+                        .requestMatchers(HttpMethod.POST, "/api/propiedades", "/api/propiedades/**").hasAuthority("ANFITRION")
+                        .requestMatchers(HttpMethod.PUT, "/api/propiedades/**").hasAuthority("ANFITRION")
+                        .requestMatchers(HttpMethod.DELETE, "/api/propiedades/**").hasAuthority("ANFITRION")
                         // Solo usuarios con rol "ANFITRION" pueden crear servicios
                         // (Podríamos cambiarlo a "ADMIN" en el futuro)
-                        //.requestMatchers(HttpMethod.POST, "/api/servicios").hasAuthority("ANFITRION")
+                        // .requestMatchers(HttpMethod.POST, "/api/servicios").hasAuthority("ANFITRION")
+
+                        .requestMatchers(HttpMethod.POST, "/api/reservas").hasAuthority("HUESPED")
 
                         // Todo lo demás (el resto de endpoints) requiere autenticación
                         .anyRequest().authenticated());

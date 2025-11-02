@@ -10,10 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,7 +91,50 @@ public class PropiedadController {
         return propiedadService.obtenerPropiedadesPorEmailAnfitrion(emailUsuarioLogueado);
     }
 
-    // --- 3. MANEJADORES DE EXCEPCIONES CORREGIDOS ---
+    /**
+     * Endpoint para BORRAR (dar de baja) una propiedad.
+     * Usa el token para validar que el usuario es el dueño.
+     *
+     * Se activa con: DELETE http://localhost:8080/api/propiedades/1
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> borrarPropiedad(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        
+        // 1. Obtenemos el email del anfitrión (dueño) desde el token
+        String emailAnfitrion = userDetails.getUsername();
+
+        // 2. Llamamos al servicio para que valide y borre
+        propiedadService.borrarPropiedad(id, emailAnfitrion);
+
+        // 3. Devolvemos un 204 No Content (estándar para DELETE exitoso)
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Endpoint para ACTUALIZAR (Editar) una propiedad existente.
+     * Usa el token para validar que el usuario es el dueño.
+     *
+     * Se activa con: PUT http://localhost:8080/api/propiedades/1
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Propiedad> actualizarPropiedad(
+            @PathVariable Long id,
+            @RequestBody Propiedad datosPropiedad,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        
+        // 1. Obtenemos el email del anfitrión (dueño) desde el token
+        String emailAnfitrion = userDetails.getUsername();
+
+        // 2. Llamamos al servicio para que valide y actualice
+        Propiedad propiedadActualizada = propiedadService.actualizarPropiedad(id, datosPropiedad, emailAnfitrion);
+
+        // 3. Devolvemos un 200 OK con la propiedad actualizada
+        return ResponseEntity.ok(propiedadActualizada);
+    }
+
+    // ---  MANEJADORES DE EXCEPCIONES  ---
 
     /**
      * Atrapa SÓLO los errores de "No Encontrado" (404)

@@ -1,7 +1,10 @@
 package com.example.openlodge.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 // ¡NUEVO IMPORT!
 import jakarta.persistence.EntityNotFoundException;
@@ -92,5 +95,64 @@ public class PropiedadService {
                         "Usuario anfitrión no encontrado con email: " + emailUsuarioLogueado));
 
         return propiedadRepository.findByAnfitrionId(anfitrion.getId());
+    }
+
+    /**
+     * Borra una propiedad, validando que el usuario sea el dueño.
+     */
+    @Transactional
+    public void borrarPropiedad(Long propiedadId, String emailUsuarioLogueado) {
+
+        // 1. Buscamos la propiedad
+        Propiedad propiedad = propiedadRepository.findById(propiedadId)
+                .orElseThrow(() -> new EntityNotFoundException("Propiedad no encontrada con ID: " + propiedadId));
+
+        // 2. ¡Validamos que el usuario logueado es el dueño!
+        validarPropietario(propiedad, emailUsuarioLogueado);
+
+        // 3. Borramos la propiedad
+        // JPA/Hibernate es lo suficientemente inteligente para borrar
+        // automáticamente las entradas en la tabla 'propiedad_x_servicio'
+        propiedadRepository.delete(propiedad);
+    }
+
+    /**
+     * ¡NUEVO MÉTODO!
+     * Actualiza una propiedad existente.
+     */
+    @Transactional
+    public Propiedad actualizarPropiedad(Long propiedadId, Propiedad datosNuevos, String emailUsuarioLogueado) {
+
+        // 1. Encontrar la propiedad existente en la BD
+        Propiedad propiedadExistente = propiedadRepository.findById(propiedadId)
+                .orElseThrow(() -> new EntityNotFoundException("Propiedad no encontrada con ID: " + propiedadId));
+
+        // 2. ¡Validar que el usuario logueado es el dueño!
+        validarPropietario(propiedadExistente, emailUsuarioLogueado);
+
+        // 3. Actualizar los campos simples
+        propiedadExistente.setTitulo(datosNuevos.getTitulo());
+        propiedadExistente.setDescripcion(datosNuevos.getDescripcion());
+        propiedadExistente.setDireccion(datosNuevos.getDireccion());
+        propiedadExistente.setPrecioPorNoche(datosNuevos.getPrecioPorNoche());
+        propiedadExistente.setNumeroHuespedes(datosNuevos.getNumeroHuespedes());
+        propiedadExistente.setImagenPrincipalUrl(datosNuevos.getImagenPrincipalUrl());
+
+        // 4. Actualizar los servicios (esta es la parte compleja)
+        if (datosNuevos.getServicios() != null) {
+            // Obtenemos los IDs de los servicios que envió el frontend
+            Set<Long> idsServiciosNuevos = datosNuevos.getServicios().stream()
+                    .map(Servicio::getId)
+                    .collect(Collectors.toSet());
+
+            // Buscamos las entidades 'Servicio' completas en la BD
+            Set<Servicio> serviciosCompletos = new HashSet<>(servicioRepository.findAllById(idsServiciosNuevos));
+
+            // Reemplazamos la lista de servicios antigua por la nueva
+            propiedadExistente.setServicios(serviciosCompletos);
+        }
+
+        // 5. Guardamos la entidad actualizada
+        return propiedadRepository.save(propiedadExistente);
     }
 }
