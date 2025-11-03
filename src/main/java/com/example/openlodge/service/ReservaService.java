@@ -47,10 +47,22 @@ public class ReservaService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Propiedad no encontrada con ID: " + request.getPropiedadId()));
 
-        // 3. Crear la nueva entidad Reserva
+        // 3. Validacion de disponibilidad
+        List<Reserva> overlappingReservas = reservaRepository.findOverlappingReservas(
+                request.getPropiedadId(),
+                request.getFechaInicio(),
+                request.getFechaFin()
+        );
+
+        if (!overlappingReservas.isEmpty()) {
+            // Lanzamos un error que el Controller atrapará
+            throw new IllegalStateException("Las fechas seleccionadas ya no están disponibles.");
+        }
+
+        // 4. Crear la nueva entidad Reserva
         Reserva nuevaReserva = new Reserva();
 
-        // 4. Llenar los datos desde el DTO
+        // 5. Llenar los datos desde el DTO
         nuevaReserva.setFechaInicio(request.getFechaInicio());
         nuevaReserva.setFechaFin(request.getFechaFin());
         nuevaReserva.setPrecioTotal(request.getPrecioTotal());

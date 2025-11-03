@@ -1,5 +1,6 @@
 package com.example.openlodge.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,18 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
      */
     @Query("SELECT r FROM Reserva r JOIN FETCH r.propiedad JOIN FETCH r.huesped WHERE r.propiedad.anfitrion.id = :anfitrionId")
     List<Reserva> findByPropiedadAnfitrionId(Long anfitrionId);
+
+    /**
+     * Busca reservas que se superpongan con un rango de fechas dado.
+     *
+     * Una reserva (A) se superpone con otra (B) si:
+     * (A.Inicio < B.Fin) Y (A.Fin > B.Inicio)
+     */
+    @Query("SELECT r FROM Reserva r WHERE r.propiedad.id = :propiedadId " +
+           "AND r.fechaInicio < :fechaFin " +
+           "AND r.fechaFin > :fechaInicio")
+    List<Reserva> findOverlappingReservas(
+            Long propiedadId, 
+            LocalDate fechaInicio, 
+            LocalDate fechaFin);
 }
