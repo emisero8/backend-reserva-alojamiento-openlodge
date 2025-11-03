@@ -103,6 +103,22 @@ public class ReservaController {
     }
 
     /**
+     * (Para el Huésped)
+     * Endpoint para que un Huésped cancele SU PROPIA reserva.
+     *
+     * Se activa con: DELETE http://localhost:8080/api/reservas/mis-reservas/1
+     */
+    @DeleteMapping("/mis-reservas/{id}")
+    public ResponseEntity<Void> cancelarMiReserva(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String emailHuesped = userDetails.getUsername();
+        reservaService.cancelarMiReserva(id, emailHuesped);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
      * Atrapa el error si el Huésped o la Propiedad no se encuentran (404)
      */
     @ExceptionHandler(EntityNotFoundException.class)

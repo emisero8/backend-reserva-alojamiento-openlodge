@@ -114,8 +114,9 @@ public class SecurityConfig {
                         // .requestMatchers(HttpMethod.POST, "/api/servicios").hasAuthority("ANFITRION")
 
                         .requestMatchers(HttpMethod.POST, "/api/reservas").hasAuthority("HUESPED")
-
                         .requestMatchers(HttpMethod.GET, "/api/reservas/mis-reservas").hasAuthority("HUESPED")
+                        .requestMatchers(HttpMethod.DELETE, "/api/reservas/mis-reservas/**").hasAuthority("HUESPED")
+
                         .requestMatchers(HttpMethod.GET, "/api/reservas/de-mis-propiedades").hasAuthority("ANFITRION")
                         .requestMatchers(HttpMethod.DELETE, "/api/reservas/**").hasAuthority("ANFITRION")
 

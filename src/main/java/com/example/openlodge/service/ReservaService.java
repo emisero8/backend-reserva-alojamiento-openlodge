@@ -1,5 +1,6 @@
 package com.example.openlodge.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,38 @@ public class ReservaService {
         }
 
         // 4. Borramos la reserva
+        reservaRepository.delete(reserva);
+    }
+
+    /**
+     * (Para el Huésped)
+     * Cancela (borra) una reserva, validando que el usuario sea el dueño
+     * Y que la reserva aún no haya comenzado.
+     */
+    @Transactional
+    public void cancelarMiReserva(Long reservaId, String emailHuesped) {
+        
+        // 1. Buscamos al Huésped (el usuario logueado)
+        Usuario huesped = usuarioRepository.findByEmail(emailHuesped)
+                .orElseThrow(() -> new EntityNotFoundException("Huésped no encontrado con email: " + emailHuesped));
+
+        // 2. Buscamos la reserva
+        Reserva reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada con ID: " + reservaId));
+
+        // 3. ¡Validación de Propietario!
+        if (!reserva.getHuesped().getId().equals(huesped.getId())) {
+            throw new AccessDeniedException("No tienes permiso para cancelar esta reserva.");
+        }
+
+        // 4. ¡Validación de Fecha!
+        LocalDate hoy = LocalDate.now();
+        if (reserva.getFechaInicio().isBefore(hoy) || reserva.getFechaInicio().isEqual(hoy)) {
+            // Si la reserva es para hoy o ya pasó, no se puede cancelar.
+            throw new IllegalStateException("No se puede cancelar una reserva que ya ha comenzado o es para hoy.");
+        }
+
+        // 5. Borramos la reserva
         reservaRepository.delete(reserva);
     }
 }
