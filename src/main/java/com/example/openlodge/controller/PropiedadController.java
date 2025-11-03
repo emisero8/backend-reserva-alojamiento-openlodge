@@ -154,5 +154,12 @@ public class PropiedadController {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
-    // ¡Ya no existe el manejador genérico de RuntimeException!
+    /**
+     * Atrapa el error si intentamos borrar/modificar algo
+     * que tiene conflictos (ej: reservas activas).
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleConflict(IllegalStateException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT); // 409 Conflict
+    }
 }

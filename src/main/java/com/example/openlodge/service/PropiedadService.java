@@ -18,6 +18,7 @@ import com.example.openlodge.model.Propiedad;
 import com.example.openlodge.model.Servicio;
 import com.example.openlodge.model.Usuario;
 import com.example.openlodge.repository.PropiedadRepository;
+import com.example.openlodge.repository.ReservaRepository;
 import com.example.openlodge.repository.ServicioRepository;
 import com.example.openlodge.repository.UsuarioRepository;
 
@@ -27,13 +28,15 @@ public class PropiedadService {
     private final PropiedadRepository propiedadRepository;
     private final UsuarioRepository usuarioRepository;
     private final ServicioRepository servicioRepository;
+    private final ReservaRepository reservaRepository;
 
     @Autowired
     public PropiedadService(PropiedadRepository propiedadRepository, UsuarioRepository usuarioRepository,
-            ServicioRepository servicioRepository) {
+            ServicioRepository servicioRepository, ReservaRepository reservaRepository) {
         this.propiedadRepository = propiedadRepository;
         this.usuarioRepository = usuarioRepository;
         this.servicioRepository = servicioRepository;
+        this.reservaRepository = reservaRepository;
     }
 
     // ... (obtenerTodasLasPropiedades y obtenerPropiedadPorId quedan igual) ...
@@ -49,6 +52,7 @@ public class PropiedadService {
         return propiedadRepository.findByAnfitrionId(anfitrionId);
     }
 
+    @Transactional
     public Propiedad crearPropiedad(Propiedad propiedad, String emailUsuarioLogueado) {
         Optional<Usuario> anfitrionOptional = usuarioRepository.findByEmail(emailUsuarioLogueado);
 
@@ -59,6 +63,11 @@ public class PropiedadService {
 
         // Si existe, lo "seteamos" en el objeto propiedad
         propiedad.setAnfitrion(anfitrionOptional.get());
+
+        long count = propiedadRepository.count();
+        long nextImageIndex = count + 1;
+        String newImageUrl = String.format("/img/propiedades/%d/IMG1.jpg", nextImageIndex);
+        propiedad.setImagenPrincipalUrl(newImageUrl);
 
         // Guardamos la propiedad (ya vinculada) en la BD
         return propiedadRepository.save(propiedad);
@@ -82,7 +91,10 @@ public class PropiedadService {
     }
 
     private void validarPropietario(Propiedad propiedad, String emailUsuarioLogueado) {
-        if (!propiedad.getAnfitrion().getEmail().equals(emailUsuarioLogueado)) {
+        String emailDelPropietario = propiedad.getAnfitrion().getEmail().trim().toLowerCase();
+        String emailLogueado = emailUsuarioLogueado.trim().toLowerCase();
+
+        if (!emailDelPropietario.equals(emailLogueado)) {
             throw new AccessDeniedException("No tienes permiso para modificar esta propiedad.");
         }
     }
@@ -110,9 +122,13 @@ public class PropiedadService {
         // 2. ¡Validamos que el usuario logueado es el dueño!
         validarPropietario(propiedad, emailUsuarioLogueado);
 
-        // 3. Borramos la propiedad
-        // JPA/Hibernate es lo suficientemente inteligente para borrar
-        // automáticamente las entradas en la tabla 'propiedad_x_servicio'
+        //  4.  Comprobamos si hay reservas asociadas.
+        if (!reservaRepository.findByPropiedadId(propiedadId).isEmpty()) {
+            // Si la lista NO está vacía, lanzamos un error de "conflicto"
+            throw new IllegalStateException("No se puede borrar la propiedad porque tiene reservas asociadas.");
+        }
+
+        // 5. Borramos la propiedad
         propiedadRepository.delete(propiedad);
     }
 
