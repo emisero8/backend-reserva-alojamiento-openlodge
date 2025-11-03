@@ -13,7 +13,7 @@ import com.example.openlodge.service.ServicioService;
 
 @RestController
 @RequestMapping("/api/servicios")
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "*")
 public class ServicioController {
     private final ServicioService servicioService;
 

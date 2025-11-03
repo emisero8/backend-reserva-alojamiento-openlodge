@@ -20,7 +20,7 @@ import com.example.openlodge.service.UsuarioService;
 
 @RestController // Le dice a Spring que esta clase es un Controlador API REST
 @RequestMapping("/api/usuarios") // La URL base para todos los métodos de esta clase
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
     // 1. Inyectamos el Servicio (el Controlador habla con el Servicio)
     private final UsuarioService usuarioService;

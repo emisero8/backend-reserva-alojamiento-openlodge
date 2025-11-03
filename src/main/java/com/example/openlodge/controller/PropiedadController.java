@@ -28,7 +28,7 @@ import com.example.openlodge.service.PropiedadService;
 
 @RestController
 @RequestMapping("/api/propiedades")
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "*")
 public class PropiedadController {
 
     private final PropiedadService propiedadService;
