@@ -20,7 +20,7 @@ public class DataLoader implements CommandLineRunner {
 
     /**
      * Este método se ejecuta automáticamente
-     * una vez que la aplicación ha arrancado.
+     * una vez que la aplicación ha arrancado
      */
     @Override
     public void run(String... args) throws Exception {

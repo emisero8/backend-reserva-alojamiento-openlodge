@@ -19,7 +19,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component // ⬅️ Le dice a Spring que esta es una clase que debe gestionar
+@Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
@@ -31,7 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Este método es el "guardia". Se ejecuta en CADA petición.
+     * Este método es el "guardia". Se ejecuta en CADA petición
      */
     @Override
     protected void doFilterInternal(
@@ -49,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 3. Extraemos el token (quitando "Bearer ")
+        // 3. Extraemos el token (quitando "Bearer")
         final String token = authHeader.substring(7);
         final String userEmail;
 
@@ -62,16 +62,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 4. Si tenemos email Y el usuario no está "logueado" en esta petición...
+        // 4. Si tenemos email Y el usuario no está "logueado" en esta petición
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             
-            // 5. ...cargamos el usuario desde la BD
+            // 5. cargamos el usuario desde la BD
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // 6. ...validamos el token
+            // 6. validamos el token
             if (jwtService.isTokenValid(token, userDetails)) {
                 
-                // 7. ¡ÉXITO! Creamos la "sesión" de autenticación
+                // Creamos la "sesión" de autenticación
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null, // No necesitamos credenciales (contraseña)
@@ -79,13 +79,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // 8. Guardamos la autenticación en el Contexto de Seguridad
-                // ¡Esto es lo que le dice a Spring que el usuario está logueado!
+                // Guardamos la autenticación en el Contexto de Seguridad
+                // Esto es lo que le dice a Spring que el usuario está logueado
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
         
-        // 9. Pasamos al siguiente filtro en la cadena
+        // 7. Pasamos al siguiente filtro en la cadena
         filterChain.doFilter(request, response);
     }
 }

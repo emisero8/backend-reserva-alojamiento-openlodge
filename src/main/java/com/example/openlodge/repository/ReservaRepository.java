@@ -13,14 +13,14 @@ import com.example.openlodge.model.Reserva;
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
        /**
         * Encuentra todas las reservas de un huésped específico,
-        * e incluye (FETCH) los datos de la Propiedad asociada.
+        * e incluye (FETCH) los datos de la Propiedad asociada
         */
        @Query("SELECT r FROM Reserva r JOIN FETCH r.propiedad WHERE r.huesped.id = :huespedId")
        List<Reserva> findByHuespedId(Long huespedId);
 
        /**
-        * * Encuentra todas las reservas de las propiedades de un anfitrión,
-        * e incluye (FETCH) los datos de la Propiedad Y del Huésped.
+        * Encuentra todas las reservas de las propiedades de un anfitrión,
+        * e incluye (FETCH) los datos de la Propiedad Y del Huésped
         */
        @Query("SELECT r FROM Reserva r JOIN FETCH r.propiedad JOIN FETCH r.huesped WHERE r.propiedad.anfitrion.id = :anfitrionId")
        List<Reserva> findByPropiedadAnfitrionId(Long anfitrionId);
@@ -40,7 +40,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
                      LocalDate fechaFin);
 
        /**
-        * Busca todas las reservas asociadas a un ID de propiedad.
+        * Busca todas las reservas asociadas a un ID de propiedad
         */
        List<Reserva> findByPropiedadId(Long propiedadId);
 }

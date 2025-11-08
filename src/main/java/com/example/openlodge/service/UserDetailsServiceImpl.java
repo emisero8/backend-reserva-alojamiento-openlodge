@@ -23,13 +23,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     /**
-     * Este es el único método que Spring Security llamará.
-     * "username" será el email que le pasemos.
+     * Este es el único método que Spring Security llamará
+     * "username" será el email que le pasemos
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         
-        // 1. Buscamos nuestro Usuario en nuestra BD
+        // 1. Buscamos nuestro Usuario en la BD
         var usuario = usuarioRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + username));
 

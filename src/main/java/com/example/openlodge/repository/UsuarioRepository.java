@@ -9,11 +9,6 @@ import com.example.openlodge.model.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    // Esto ya trae métodos como: Con el extend.
-    //  save(usuario): Guarda un usuario nuevo o actualiza uno existente.
-    //  findById(id): Busca un usuario por su ID.
-    //  findAll(): Devuelve todos los usuarios.
-    //  deleteById(id): Borra un usuario.
 
     Optional<Usuario> findByEmail(String email);
 }

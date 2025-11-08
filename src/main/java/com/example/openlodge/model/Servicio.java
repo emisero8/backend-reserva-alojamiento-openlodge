@@ -38,10 +38,7 @@ public class Servicio {
     @Column(nullable = false)
     private Double costo;
 
-    // Esta es la "otra cara" de la relación.
-    // Le dice a JPA: "No crees una columna 'propiedades' aquí,
-    // la entidad Propiedad ya se encarga de la relación".
     @ManyToMany(mappedBy = "servicios")
-    @JsonIgnore // ¡Importante! Evita bucles infinitos al convertir a JSON
+    @JsonIgnore
     private Set<Propiedad> propiedades = new HashSet<>();
 }

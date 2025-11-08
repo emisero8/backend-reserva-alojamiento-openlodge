@@ -36,43 +36,32 @@ public class Propiedad {
     private Long id;
 
     @Column(nullable = false)
-    private String titulo; // Ej: "Casa de campo con pileta"
+    private String titulo;
 
     @Column(nullable = false, length = 1000)
     private String descripcion; // Descripción larga
 
     @Column(nullable = false)
-    private String direccion; // Aquí va el JSON 'title': "General Lopez 3234..."
+    private String direccion;
 
     @Column(nullable = false)
-    private Double precioPorNoche; // Aquí va el JSON 'price'
+    private Double precioPorNoche;
 
     @Column(nullable = false)
     private int numeroHuespedes; // Max. cantidad de personas
 
-    // --- ESTOS DOS SE DETALLAN EN LA DESCRIPCION Y LISTO ---
-    //@Column(nullable = false)
-    //private int habitaciones; // De "2 habitaciones"
-
-    //@Column(nullable = false)
-    //private int banos; // De "1 baño"
-
-    // --- Campo para la imagen ---
+    // Campo para la imagen
     @Column(name = "imagen_principal_url")
     private String imagenPrincipalUrl; // Aquí va el JSON 'img'
 
-    // --- Relación con el Anfitrión ---
+    // Relación con el Anfitrión
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anfitrion_id", nullable = false)
     private Usuario anfitrion;
 
-    // --- ¡NUEVO! Para la lista de "servicios" ---
-    // Esto crea una tabla separada llamada "propiedad_servicios"
-    // que contendrá "WIFI", "Pileta", etc., asociadas a esta propiedad.
-    //@ElementCollection(fetch = FetchType.EAGER) // EAGER: Cargar los servicios junto con la propiedad
-    //@CollectionTable(name = "propiedad_servicios", joinColumns = @JoinColumn(name = "propiedad_id"))
-    //@Column(name = "servicio", nullable = false)
 
+    // Esto crea una tabla separada "propiedad_servicios"
+    // que contiene "WIFI", "Pileta", etc asociadas a la propiedad
     @ManyToMany(fetch = FetchType.EAGER) // EAGER: Cargar los servicios con la propiedad
     @JoinTable(
         name = "propiedad_x_servicio", // tabla intermedia
@@ -80,6 +69,5 @@ public class Propiedad {
         inverseJoinColumns = @JoinColumn(name = "servicio_id")
     )
 
-    private Set<Servicio> servicios = new HashSet<>(); // Usamos Set para evitar duplicados
-
+    private Set<Servicio> servicios = new HashSet<>();
 }

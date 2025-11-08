@@ -35,8 +35,8 @@ public class ReservaController {
     }
 
     /**
-     * Endpoint para CREAR una nueva reserva.
-     * Usará el token del Huésped.
+     * Endpoint para CREAR una nueva reserva
+     * Usará el token del Huésped
      *
      * Se activa con: POST http://localhost:8080/api/reservas
      */
@@ -56,7 +56,7 @@ public class ReservaController {
     }
 
     /**
-     * Obtiene el historial de reservas del huésped logueado.
+     * Obtiene el historial de reservas del huésped logueado
      *
      * Se activa con: GET http://localhost:8080/api/reservas/mis-reservas
      */
@@ -69,7 +69,7 @@ public class ReservaController {
     }
 
     /**
-     * Obtiene todas las reservas hechas a las propiedades del anfitrión logueado.
+     * Obtiene todas las reservas hechas a las propiedades del anfitrión logueado
      *
      * Se activa con: GET http://localhost:8080/api/reservas/de-mis-propiedades
      */
@@ -82,8 +82,7 @@ public class ReservaController {
     }
 
     /**
-     * Endpoint para BORRAR (cancelar) una reserva.
-     * (Usado por el Anfitrión en 'MenuGestionar')
+     * Endpoint para BORRAR (cancelar) una reserva
      *
      * Se activa con: DELETE http://localhost:8080/api/reservas/1
      */
@@ -103,8 +102,7 @@ public class ReservaController {
     }
 
     /**
-     * (Para el Huésped)
-     * Endpoint para que un Huésped cancele SU PROPIA reserva.
+     * Endpoint para que un Huésped cancele SU PROPIA reserva
      *
      * Se activa con: DELETE http://localhost:8080/api/reservas/mis-reservas/1
      */

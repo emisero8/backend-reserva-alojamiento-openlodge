@@ -18,7 +18,7 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-    // 1. Inyectamos los valores desde application.properties
+    // Inyectamos los valores desde application.properties
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
@@ -48,7 +48,7 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // --- Métodos Privados de Utilidad ---
+    // --- Métodos Privados ---
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()

@@ -24,8 +24,6 @@ public class ServicioController {
 
     /**
      * Endpoint para OBTENER TODOS los servicios maestros.
-     * Tu app de React Native llamará a esto para mostrarle al anfitrión
-     * la lista de checkboxes (WIFI, Pileta, etc.) que puede agregar.
      *
      * Se activa con: GET http://localhost:8080/api/servicios
      */
@@ -34,16 +32,4 @@ public class ServicioController {
         return servicioService.obtenerTodosLosServicios();
     }
 
-    /**
-     * Endpoint para CREAR un nuevo servicio maestro.
-     * (Este endpoint es 'privado', solo para admins, pero por ahora
-     * lo usaremos para cargar los datos de tu JSON).
-     *
-     * Se activa con: POST http://localhost:8080/api/servicios
-     */
-   // @PostMapping
-    //public ResponseEntity<Servicio> crearServicio(@RequestBody Servicio servicio) {
-     //   Servicio nuevoServicio = servicioService.crearServicio(servicio);
-      //  return new ResponseEntity<>(nuevoServicio, HttpStatus.CREATED);
-    //}
 }

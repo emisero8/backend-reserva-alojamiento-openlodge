@@ -10,29 +10,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data // ⬅️ Lombok: Crea getters, setters, toString(), equals(), hashCode()
-@NoArgsConstructor // ⬅️ Lombok: Crea un constructor vacío (necesario para JPA)
-@AllArgsConstructor // ⬅️ Lombok: Crea un constructor con todos los argumentos
-@Entity // ⬅️ JPA: Le dice a Spring que esta clase es una tabla de BD
-@Table(name = "usuarios") // ⬅️ JPA: Nombra la tabla (en plural es buena práctica)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
 
-    @Id // ⬅️ JPA: Marca esto como la Clave Primaria (Primary Key)
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ⬅️ JPA: Hace que el ID sea autoincremental
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) // ⬅️ JPA: Columna no puede ser nula
+    @Column(nullable = false)
     private String nombre;
 
     @Column(nullable = false)
     private String apellido;
 
-    @Column(nullable = false, unique = true) // ⬅️ JPA: No puede ser nulo Y no se puede repetir
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    private String password; // (Más adelante la "hashearemos" con Spring Security)
+    private String password;
 
     @Column(nullable = false)
-    private String rol; // (Aquí guardaremos si es "HUESPED" o "ANFITRION")
+    private String rol;
 }

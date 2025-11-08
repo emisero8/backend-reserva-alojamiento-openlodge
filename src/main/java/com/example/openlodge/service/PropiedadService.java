@@ -6,12 +6,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// ¡NUEVO IMPORT!
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-// ¡IMPORT CORREGIDO! (El de Spring es mejor aquí)
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.openlodge.model.Propiedad;
@@ -61,7 +59,7 @@ public class PropiedadService {
             throw new EntityNotFoundException("Anfitrión no encontrado con email: " + emailUsuarioLogueado);
         }
 
-        // Si existe, lo "seteamos" en el objeto propiedad
+        // Si existe, lo seteamos en el objeto propiedad
         propiedad.setAnfitrion(anfitrionOptional.get());
 
         long count = propiedadRepository.count();
@@ -77,13 +75,11 @@ public class PropiedadService {
     public Propiedad agregarServicioAPropiedad(Long propiedadId, Long servicioId, String emailUsuarioLogueado) {
 
         Propiedad propiedad = propiedadRepository.findById(propiedadId)
-                // ¡CAMBIO AQUÍ!
                 .orElseThrow(() -> new EntityNotFoundException("Propiedad no encontrada con ID: " + propiedadId));
 
         validarPropietario(propiedad, emailUsuarioLogueado);
 
         Servicio servicio = servicioRepository.findById(servicioId)
-                // ¡CAMBIO AQUÍ!
                 .orElseThrow(() -> new EntityNotFoundException("Servicio no encontrado con ID: " + servicioId));
 
         propiedad.getServicios().add(servicio);
@@ -102,7 +98,6 @@ public class PropiedadService {
     public List<Propiedad> obtenerPropiedadesPorEmailAnfitrion(String emailUsuarioLogueado) {
 
         Usuario anfitrion = usuarioRepository.findByEmail(emailUsuarioLogueado)
-                // ¡CAMBIO AQUÍ!
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Usuario anfitrión no encontrado con email: " + emailUsuarioLogueado));
 
@@ -110,7 +105,7 @@ public class PropiedadService {
     }
 
     /**
-     * Borra una propiedad, validando que el usuario sea el dueño.
+     * Borra una propiedad, validando que el usuario sea el dueño
      */
     @Transactional
     public void borrarPropiedad(Long propiedadId, String emailUsuarioLogueado) {
@@ -119,21 +114,20 @@ public class PropiedadService {
         Propiedad propiedad = propiedadRepository.findById(propiedadId)
                 .orElseThrow(() -> new EntityNotFoundException("Propiedad no encontrada con ID: " + propiedadId));
 
-        // 2. ¡Validamos que el usuario logueado es el dueño!
+        // 2. Validamos que el usuario logueado es el dueño
         validarPropietario(propiedad, emailUsuarioLogueado);
 
-        //  4.  Comprobamos si hay reservas asociadas.
+        //  3.  Comprobamos si hay reservas asociadas
         if (!reservaRepository.findByPropiedadId(propiedadId).isEmpty()) {
-            // Si la lista NO está vacía, lanzamos un error de "conflicto"
+            // Si la lista NO está vacía, lanzamos un error
             throw new IllegalStateException("No se puede borrar la propiedad porque tiene reservas asociadas.");
         }
 
-        // 5. Borramos la propiedad
+        // 4. Borramos la propiedad
         propiedadRepository.delete(propiedad);
     }
 
     /**
-     * ¡NUEVO MÉTODO!
      * Actualiza una propiedad existente.
      */
     @Transactional
@@ -143,7 +137,7 @@ public class PropiedadService {
         Propiedad propiedadExistente = propiedadRepository.findById(propiedadId)
                 .orElseThrow(() -> new EntityNotFoundException("Propiedad no encontrada con ID: " + propiedadId));
 
-        // 2. ¡Validar que el usuario logueado es el dueño!
+        // 2. Validar que el usuario logueado es el dueño
         validarPropietario(propiedadExistente, emailUsuarioLogueado);
 
         // 3. Actualizar los campos simples

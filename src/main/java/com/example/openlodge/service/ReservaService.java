@@ -78,8 +78,7 @@ public class ReservaService {
     }
 
     /**
-     * Obtiene todas las reservas hechas POR un huésped.
-     * (Para la pantalla "Mis Reservas" del Huésped)
+     * Obtiene todas las reservas hechas POR un huésped
      */
     public List<Reserva> obtenerMisReservas(String emailHuesped) {
         // 1. Buscamos al Huésped por su email (del token)
@@ -91,8 +90,7 @@ public class ReservaService {
     }
 
     /**
-     * Obtiene todas las reservas hechas A las propiedades de un Anfitrión.
-     * (Para el 'MenuGestionar' del Anfitrión)
+     * Obtiene todas las reservas hechas A las propiedades de un Anfitrión
      */
     public List<Reserva> obtenerReservasDeMisPropiedades(String emailAnfitrion) {
         // 1. Buscamos al Anfitrión por su email (del token)
@@ -104,8 +102,8 @@ public class ReservaService {
     }
 
     /**
-     * Cancela (borra) una reserva.
-     * Valida que el usuario logueado sea el Anfitrión de la propiedad reservada.
+     * Cancela (borra) una reserva
+     * Valida que el usuario logueado sea el Anfitrión de la propiedad reservada
      */
     @Transactional
     public void cancelarReserva(Long reservaId, String emailAnfitrion) {
@@ -118,7 +116,7 @@ public class ReservaService {
         Usuario anfitrion = usuarioRepository.findByEmail(emailAnfitrion)
                 .orElseThrow(() -> new EntityNotFoundException("Anfitrión no encontrado con email: " + emailAnfitrion));
 
-        // 3. ¡Validamos que este anfitrión sea el dueño de la propiedad reservada!
+        // 3. Validamos que este anfitrión sea el dueño de la propiedad reservada
         Propiedad propiedadReservada = reserva.getPropiedad();
         if (!propiedadReservada.getAnfitrion().getId().equals(anfitrion.getId())) {
             throw new AccessDeniedException("No tienes permiso para cancelar esta reserva.");
@@ -144,15 +142,15 @@ public class ReservaService {
         Reserva reserva = reservaRepository.findById(reservaId)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada con ID: " + reservaId));
 
-        // 3. ¡Validación de Propietario!
+        // 3. Validación de Propietario
         if (!reserva.getHuesped().getId().equals(huesped.getId())) {
             throw new AccessDeniedException("No tienes permiso para cancelar esta reserva.");
         }
 
-        // 4. ¡Validación de Fecha!
+        // 4. Validación de Fecha
         LocalDate hoy = LocalDate.now();
         if (reserva.getFechaInicio().isBefore(hoy) || reserva.getFechaInicio().isEqual(hoy)) {
-            // Si la reserva es para hoy o ya pasó, no se puede cancelar.
+            // Si la reserva es para hoy o ya pasó, no se puede cancelar
             throw new IllegalStateException("No se puede cancelar una reserva que ya ha comenzado o es para hoy.");
         }
 

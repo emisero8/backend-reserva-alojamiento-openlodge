@@ -18,11 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.openlodge.model.Usuario;
 import com.example.openlodge.service.UsuarioService;
 
-@RestController // Le dice a Spring que esta clase es un Controlador API REST
-@RequestMapping("/api/usuarios") // La URL base para todos los métodos de esta clase
+@RestController
+@RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*")
 public class UsuarioController {
-    // 1. Inyectamos el Servicio (el Controlador habla con el Servicio)
     private final UsuarioService usuarioService;
 
     @Autowired
@@ -30,10 +29,9 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    // --- Endpoints de la API ---
 
     /**
-     * Endpoint para CREAR un nuevo usuario.
+     * Endpoint para CREAR un nuevo usuario
      * Se activa con: POST http://localhost:8080/api/usuarios
      * @param usuario El objeto Usuario vendrá en el body JSON de la petición
      */
@@ -45,7 +43,7 @@ public class UsuarioController {
     }
 
     /**
-     * Endpoint para OBTENER TODOS los usuarios.
+     * Endpoint para OBTENER TODOS los usuarios
      * Se activa con: GET http://localhost:8080/api/usuarios
      */
     @GetMapping
@@ -54,7 +52,7 @@ public class UsuarioController {
     }
 
     /**
-     * Endpoint para OBTENER UN usuario por su ID.
+     * Endpoint para OBTENER UN usuario por su ID
      * Se activa con: GET http://localhost:8080/api/usuarios/1 (por ejemplo)
      * @param id El ID vendrá de la URL
      */
@@ -72,7 +70,7 @@ public class UsuarioController {
 
     /**
      * Atrapa la excepción que lanzamos desde el servicio
-     * si el email ya existe.
+     * si el email ya existe
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {

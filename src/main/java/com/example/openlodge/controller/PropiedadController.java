@@ -33,12 +33,9 @@ public class PropiedadController {
 
     private final PropiedadService propiedadService;
 
-    @Autowired
     public PropiedadController(PropiedadService propiedadService) {
         this.propiedadService = propiedadService;
     }
-
-    // --- (Todos tus endpoints GET y POST quedan exactamente igual) ---
 
     @GetMapping
     public List<Propiedad> obtenerTodasLasPropiedades() {
@@ -92,8 +89,8 @@ public class PropiedadController {
     }
 
     /**
-     * Endpoint para BORRAR (dar de baja) una propiedad.
-     * Usa el token para validar que el usuario es el dueño.
+     * Endpoint para BORRAR (dar de baja) una propiedad
+     * Usa el token para validar que el usuario es el dueño
      *
      * Se activa con: DELETE http://localhost:8080/api/propiedades/1
      */
@@ -113,8 +110,8 @@ public class PropiedadController {
     }
 
     /**
-     * Endpoint para ACTUALIZAR (Editar) una propiedad existente.
-     * Usa el token para validar que el usuario es el dueño.
+     * Endpoint para ACTUALIZAR (Editar) una propiedad existente
+     * Usa el token para validar que el usuario es el dueño
      *
      * Se activa con: PUT http://localhost:8080/api/propiedades/1
      */
@@ -138,7 +135,7 @@ public class PropiedadController {
 
     /**
      * Atrapa SÓLO los errores de "No Encontrado" (404)
-     * que lanzamos desde el servicio (usando EntityNotFoundException).
+     * que lanzamos desde el servicio (usando EntityNotFoundException)
      */
     @ExceptionHandler(EntityNotFoundException.class) // ⬅️ ¡CAMBIO IMPORTANTE!
     public ResponseEntity<String> handleNotFound(EntityNotFoundException ex) {
@@ -147,7 +144,6 @@ public class PropiedadController {
 
     /**
      * Atrapa los errores de "Acceso Denegado" (403)
-     * (Ahora usa la importación correcta de Spring Security)
      */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDenied(AccessDeniedException ex) {
@@ -156,7 +152,7 @@ public class PropiedadController {
 
     /**
      * Atrapa el error si intentamos borrar/modificar algo
-     * que tiene conflictos (ej: reservas activas).
+     * que tiene conflictos (ej: reservas activas)
      */
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handleConflict(IllegalStateException ex) {

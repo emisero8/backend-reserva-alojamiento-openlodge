@@ -18,18 +18,17 @@ public class ServicioService {
     }
 
     /**
-     * Obtiene la lista completa de servicios disponibles en el sistema.
+     * Obtiene la lista completa de servicios disponibles en el sistema
      */
     public List<Servicio> obtenerTodosLosServicios() {
         return servicioRepository.findAll();
     }
 
     /**
-     * Crea un nuevo servicio maestro (ej: "Parrilla", 5000.0)
-     * (Esto lo usaremos para cargar tu JSON inicial)
+     * Crea un nuevo servicio maestro
      */
     public Servicio crearServicio(Servicio servicio) {
-        // (Podríamos agregar validación para que no se repita el nombre)
+        // Podríamos agregar validación para que no se repita el nombre
         return servicioRepository.save(servicio);
     }
 }

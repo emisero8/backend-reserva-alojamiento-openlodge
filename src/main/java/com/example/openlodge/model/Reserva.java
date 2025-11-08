@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter // Usamos @Getter y @Setter en lugar de @Data
+@Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,16 +42,16 @@ public class Reserva {
     private String notas; // Notas al locador
 
     /**
-     * La propiedad que se está reservando.
-     * Muchas reservas pueden apuntar a una propiedad.
+     * La propiedad que se está reservando
+     * Muchas reservas pueden apuntar a una propiedad
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "propiedad_id", nullable = false)
     private Propiedad propiedad;
 
     /**
-     * El usuario (huésped) que está haciendo la reserva.
-     * Muchas reservas pueden pertenecer a un usuario.
+     * El usuario (huésped) que está haciendo la reserva
+     * Muchas reservas pueden pertenecer a un usuario
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "huesped_id", nullable = false)

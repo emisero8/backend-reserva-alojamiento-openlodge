@@ -48,9 +48,9 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
         
         // 1. Autenticamos al usuario
-        // Esto usa el AuthenticationManager que configuramos en SecurityConfig.
-        // Internamente, llamará a UserDetailsServiceImpl y PasswordEncoder.
-        // Si el email o la contraseña son incorrectos, lanzará una excepción.
+        // Esto usa el AuthenticationManager que configuramos en SecurityConfig
+        // Internamente, llama a UserDetailsServiceImpl y PasswordEncoder
+        // Si el email o la contraseña son incorrectos, lanza una excepción
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(), 
@@ -68,13 +68,7 @@ public class AuthController {
         Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail())
             .orElseThrow(() -> new EntityNotFoundException("Error post-autenticación: Usuario no encontrado"));
 
-        // 4. Obtenemos el rol desde los UserDetails
-        //final String rol = userDetails.getAuthorities().stream()
-        //        .map(GrantedAuthority::getAuthority)
-        //        .findFirst()
-        //        .orElseThrow(() -> new RuntimeException("Usuario no tiene rol."));
-
-        // 5. Devolvemos el token en la respuesta
+        // 4. Devolvemos el token en la respuesta
         return ResponseEntity.ok(new AuthResponse(
             token, 
             usuario.getRol(), 

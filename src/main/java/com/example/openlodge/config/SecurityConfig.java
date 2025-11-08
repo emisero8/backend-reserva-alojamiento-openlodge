@@ -18,8 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.example.openlodge.service.UserDetailsServiceImpl;
 
-@Configuration // ⬅️ Le dice a Spring que esta es una clase de configuración
-@EnableWebSecurity // ⬅️ Habilita la seguridad web de Spring
+@Configuration 
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -41,9 +41,7 @@ public class SecurityConfig {
     }
 
     /**
-     * ¡ESTE ES EL BEAN QUE FALTABA!
      * Este es el "Gerente" de Autenticación.
-     * Lo inyectaremos en nuestro controlador de Login.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -51,20 +49,20 @@ public class SecurityConfig {
     }
 
     /**
-     * Este es el "Proveedor" de Autenticación.
+     * Este es el "Proveedor" de Autenticación
      * Le dice a Spring que use nuestro UserDetailsServiceImpl (para encontrar al
      * usuario)
-     * y nuestro PasswordEncoder (para comparar las contraseñas).
+     * y nuestro PasswordEncoder (para comparar las contraseñas)
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(passwordEncoder());
-        authProvider.setUserDetailsService(userDetailsService); // Esta advertencia debería desaparecer
+        authProvider.setUserDetailsService(userDetailsService);
         return authProvider;
     }
 
     /**
-     * Configuramos las "reglas" de seguridad de la API.
+     * Configuramos las "reglas" de seguridad de la API
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -72,7 +70,6 @@ public class SecurityConfig {
                 // 1. Deshabilitamos CSRF (común en APIs REST stateless)
                 .csrf(csrf -> csrf.disable())
 
-                // ¡LÍNEA AGREGADA PARA EVITAR LAS CAJAS DE CONEXION RECHAZADA EN LOCALHOST!
                 // H2 Console usa frames, y Spring Security los bloquea por defecto.
                 // Esta línea deshabilita esa protección (X-Frame-Options: DENY).
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
@@ -94,24 +91,15 @@ public class SecurityConfig {
 
                         // RUTAS PÚBLICAS (INCLUYENDO /LOGIN)
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // ⬅️ Para registrarse
-                        // Solo permitimos ver la lista completa y el detalle por ID
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/propiedades", "/api/propiedades/{id}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/servicios").permitAll() // Para que todos vean los
-                                                                                       // servicios
-                        // .requestMatchers(HttpMethod.POST, "/api/servicios").permitAll() // Para poder
-                        // cargarlos (temporal)
-                        .requestMatchers("/h2-console/**").permitAll() // ⬅️ Permitir acceso a la consola H2
+                        .requestMatchers(HttpMethod.GET, "/api/servicios").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
 
                         // RUTAS POR ROL
-                        // Solo usuarios con rol "ANFITRION" pueden crear propiedades
-                        // o asignar servicios.
                         .requestMatchers(HttpMethod.POST, "/api/propiedades", "/api/propiedades/**").hasAuthority("ANFITRION")
                         .requestMatchers(HttpMethod.PUT, "/api/propiedades/**").hasAuthority("ANFITRION")
                         .requestMatchers(HttpMethod.DELETE, "/api/propiedades/**").hasAuthority("ANFITRION")
-                        // Solo usuarios con rol "ANFITRION" pueden crear servicios
-                        // (Podríamos cambiarlo a "ADMIN" en el futuro)
-                        // .requestMatchers(HttpMethod.POST, "/api/servicios").hasAuthority("ANFITRION")
 
                         .requestMatchers(HttpMethod.POST, "/api/reservas").hasAuthority("HUESPED")
                         .requestMatchers(HttpMethod.GET, "/api/reservas/mis-reservas").hasAuthority("HUESPED")
